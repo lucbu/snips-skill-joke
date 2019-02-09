@@ -18,6 +18,8 @@ MQTT_IP_ADDR = "localhost"
 MQTT_PORT = 1883
 MQTT_ADDR = "{}:{}".format(MQTT_IP_ADDR, str(MQTT_PORT))
 
+jokes = json.loads(requests.get("https://bridge.buddyweb.fr/api/blagues/blagues").content)
+
 class Joke(object):
     """Class used to wrap action code with mqtt connection
         
@@ -38,8 +40,6 @@ class Joke(object):
     def intent_joke_callback(self, hermes, intent_message):
         # terminate the session first if not continue
         hermes.publish_end_session(intent_message.session_id, "")
-
-        jokes = json.loads(requests.get("https://bridge.buddyweb.fr/api/blagues/blagues").content)
 
         # if need to speak the execution result by tts
         hermes.publish_start_session_notification(intent_message.site_id, jokes[random.randint(0, len(jokes) - 1)]['blagues'], "")
